@@ -11,48 +11,71 @@ import bluetooth
 import pickle
 import time
 import datetime
+import yaml
+import argparse
+from pathlib import Path
+from yaml import Loader
 
-test_data = {
-    "uuid": "ddedfe7e-d33e-11ee-a587-4714a87c8d30",
-    "metadata": "There is a bathroom nearby",
-    "node_name": "Vertigo Room",
-    "timestamp": str(datetime.datetime.now())
-}
-
-server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-server_sock.bind(("", bluetooth.PORT_ANY))
-server_sock.listen(1)
-
-port = server_sock.getsockname()[1]
-
-uuid = test_data["uuid"]
+NODE_DATA_PATH = Path(__file__).parent / "map_nodes.yaml"
 
 
-bluetooth.advertise_service(server_sock, "SampleServer", service_id=uuid,
-                            service_classes=[uuid, bluetooth.SERIAL_PORT_CLASS],
-                            profiles=[bluetooth.SERIAL_PORT_PROFILE],
-                            # protocols=[bluetooth.OBEX_UUID]
-                            )
-
-def establish_ble():
+def establish_ble(server_sock, port):
+    print("Waiting for connection on RFCOMM channel", port)
     client_sock, client_info = server_sock.accept()
     print("Accepted connection from", client_info)
 
-    return client_sock, client_info
-print("Waiting for connection on RFCOMM channel", port)
+    return client_sock
 
-def main():
-    client_sock, client_info = establish_ble()
+
+def parse_yaml(idx: int):
+    with open(NODE_DATA_PATH, "r") as file:
+        data = yaml.safe_load(file)
+    del data[idx]["x_coord"]
+    del data[idx]["y_coord"]
+    return data[0]
+
+
+def main(idx: int):
+    node_data = parse_yaml(idx)
+    uuid = node_data["uuid"]
+
+    server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+    server_sock.bind(("", bluetooth.PORT_ANY))
+    server_sock.listen(1)
+
+    port = server_sock.getsockname()[1]
+
+    bluetooth.advertise_service(
+        server_sock,
+        "SampleServer",
+        service_id=uuid,
+        service_classes=[uuid, bluetooth.SERIAL_PORT_CLASS],
+        profiles=[bluetooth.SERIAL_PORT_PROFILE],
+        # protocols=[bluetooth.OBEX_UUID]
+    )
+
+    client_sock = establish_ble(server_sock, port)
     while True:
-        test_data["time"] = str(datetime.datetime.now())
         try:
-            client_sock.send(pickle.dumps(test_data, -1))
+            client_sock.send(pickle.dumps(node_data, -1))
             data = client_sock.recv(1024)
             print(data)
         except bluetooth.btcommon.BluetoothError:
-            client_sock, client_info = establish_ble()
+            client_sock = establish_ble(server_sock, port)
 
         time.sleep(1)
 
+
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        description="Setup Raspberry Pi Transmitters",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
+    parser.add_argument(
+        "-idx",
+        type=int,
+        help="Index in `map_nodes.yaml` to set this BLE Device with",
+        default=0,
+    )
+    args = parser.parse_args()
+    main(args.idx)
