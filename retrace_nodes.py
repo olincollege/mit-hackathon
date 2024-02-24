@@ -4,6 +4,7 @@
 
 import openai
 import requests
+import constants
 
 
 def general_prompt():
@@ -146,10 +147,11 @@ def general_prompt():
     Please don't say 'based on the log provided' or any other thing other than where it is located.\
      Also mention where it is located first then say after and before.
     """
+    openai.api_key = constants.API_KEY
     general_response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo", messages=[{"role": "user", "content": usr_msg}]
     )
-    return (usr_msg, general_response)
+    return usr_msg
 
 
 def generate_answer(node_list):
