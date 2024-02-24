@@ -1,8 +1,10 @@
+"""
+Helper functions to generate metadata for a given image.
+"""
+
 import base64
 import requests
-
-# %env OPENAI_API_KEY=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
-api_key = "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"
+import constants  # contains API key as string assigned to variable api_key
 
 
 def encode_img(path):
@@ -27,6 +29,8 @@ def generate_metadata(img_path):
         else:
             this_value = response_dict[: response_dict.find(",")].strip()
 
+        this_key = this_key.replace("_", " ")
+        this_value = this_value.replace("_", " ")
         cleaned_dict[this_key.strip('"')] = this_value.strip('"')
 
     return cleaned_dict
@@ -36,7 +40,7 @@ def get_gpt_response(img_path):
     base64_img = encode_img(img_path)
     prompt = 'Please examine the image and provide the directions to objects present in it, relative to my point of view, in a JSON format. The JSON file should look like `{"restaurant" : "right", "parking" : "ahead", "seating" : "left"}. Include facilities such as restrooms, elevators, information desks, exits, restaurants, and any transportation services like taxi stands or railway stations if visible. Also include any other relevant information regarding facilities. Do not include information about people, the general environment, or decorative elements. Be specific with the names of different locations. If the object is not visible don\'t include it in the JSON. For any signs, give direction direction according to the arrow, if there\'s no arrow present, just say here. Double check each entry in the JSON to make sure it is in the image'
 
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {constants.API_KEY}"}
 
     payload = {
         "model": "gpt-4-vision-preview",
