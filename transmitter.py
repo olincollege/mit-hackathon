@@ -32,7 +32,7 @@ def parse_yaml(idx: int):
         data = yaml.safe_load(file)
     del data[idx]["x_coord"]
     del data[idx]["y_coord"]
-    return data[0]
+    return data[idx]
 
 
 def main(idx: int):
