@@ -60,7 +60,7 @@ def main(idx: int):
         try:
             client_sock.send(pickle.dumps(node_data, -1))
             data = client_sock.recv(1024)
-            print(data)
+            print(f"{datetime.datetime.now().__str__()}\t{data}")
         except bluetooth.btcommon.BluetoothError:
             client_sock = establish_ble(server_sock, port)
 
