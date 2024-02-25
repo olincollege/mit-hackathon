@@ -16,7 +16,7 @@ import argparse
 from pathlib import Path
 from yaml import Loader
 
-NODE_DATA_PATH = Path(__file__).parent / "map_nodes.yaml"
+NODE_DATA_PATH = Path(__file__).parent / "stata_nodes.yaml"
 
 
 def establish_ble(server_sock, port):
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         "-idx",
         type=int,
         help="Index in `map_nodes.yaml` to set this BLE Device with",
-        default=0,
+        default=None,
     )
     args = parser.parse_args()
     main(args.idx)
