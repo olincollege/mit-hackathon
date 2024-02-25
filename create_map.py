@@ -74,10 +74,21 @@ node_list = """
 
 
 def main():
+    # Define floor plan and generate nodes
     img_path = "images/stata.jpeg"
     nodes = mp.generate_nodes(img_path)
-    mp.assign_metadata(nodes, "images/classroom.jpg", nodes[0]["uuid"])
-    mp.create_yaml(nodes, "stata_nodes")
+
+    # Add metadata to nodes
+
+    ## 461: "e2d66351-38a8-428a-a3d4-a6c12b595e3b"
+    ## 434: "e71df78f-6e3e-47ec-b4d9-0674c8e56e1f"
+    img_node_dict = {
+        "images/demo2.jpg": "d461",
+        "images/demo1.jpg": "d434",
+    }
+
+    nodes_new = mp.assign_metadata(nodes, img_node_dict)
+    mp.create_yaml(nodes_new, "stata_nodes_test")
 
     # answer = rn.general_prompt(node_list, "Where is the bathroom")
     # response = answer["choices"][0]["message"]["content"]

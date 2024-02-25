@@ -48,11 +48,13 @@ def generate_nodes(img_path):
     return map_nodes
 
 
-def assign_metadata(map_nodes, img_path, node_uuid):
-    metadata_dict = gm.generate_metadata(img_path)
-    for item in map_nodes:
-        if item["uuid"] == node_uuid:
-            item["meta_data"] = metadata_dict
+def assign_metadata(map_nodes, img_paths_node_dict):
+    for img_path, node in img_paths_node_dict.items():
+        metadata_dict = gm.generate_metadata(img_path)
+        for item in map_nodes:
+            if item["node_name"] == node:
+                item["meta_data"] = metadata_dict
+    return map_nodes
 
 
 def create_yaml(map_nodes, file_name):
