@@ -74,13 +74,13 @@ node_list = """
 
 
 def main():
-    # img_path = "images/stata.jpeg"
-    # nodes = mp.generate_nodes(img_path)
-    # mp.assign_metadata(nodes, "images/img1.jpg", nodes[0]["uuid"])
-    # mp.create_yaml(nodes, "stata_nodes")
+    img_path = "images/stata.jpeg"
+    nodes = mp.generate_nodes(img_path)
+    mp.assign_metadata(nodes, "images/classroom.jpg", nodes[0]["uuid"])
+    mp.create_yaml(nodes, "stata_nodes")
 
-    answer = rn.general_prompt(node_list, "Where is the bathroom")
-    response = answer["choices"][0]["message"]["content"]
+    # answer = rn.general_prompt(node_list, "Where is the bathroom")
+    # response = answer["choices"][0]["message"]["content"]
 
 
 main()

@@ -14,6 +14,7 @@ def encode_img(path):
 
 def generate_metadata(img_path):
     response = get_gpt_response(img_path)
+    print(response.json())
     response_cut = str(response.json()["choices"][0]["message"]["content"])
     response_dict = response_cut[response_cut.find("{") :]
 
@@ -28,6 +29,7 @@ def generate_metadata(img_path):
             this_value = response_dict[: response_dict.find("}")].strip()
         else:
             this_value = response_dict[: response_dict.find(",")].strip()
+        response_dict = response_dict[response_dict.find(",") :]
 
         this_key = this_key.replace("_", " ")
         this_value = this_value.replace("_", " ")
@@ -38,9 +40,11 @@ def generate_metadata(img_path):
 
 def get_gpt_response(img_path):
     base64_img = encode_img(img_path)
-    prompt = 'Please examine the image and provide the directions to objects present in it, relative to my point of view, in a JSON format. The JSON file should look like `{"restaurant" : "right", "parking" : "ahead", "seating" : "left"}. Include facilities such as restrooms, elevators, information desks, exits, restaurants, and any transportation services like taxi stands or railway stations if visible. Also include any other relevant information regarding facilities. Do not include information about people, the general environment, or decorative elements. Be specific with the names of different locations. If the object is not visible don\'t include it in the JSON. For any signs, give direction direction according to the arrow, if there\'s no arrow present, just say here. Double check each entry in the JSON to make sure it is in the image'
 
-    headers = {"Content-Type": "/json", "Authorization": f"Bearer {constants.API_KEY}"}
+    api_key = constants.API_KEY
+    prompt = 'Please examine the image and provide the directions to objects present in it, relative to my point of view, in a JSON format. The JSON file should look like `{"restaurant" : "right", "parking" : "ahead", "seating" : "left"}. Include facilities such as restrooms, elevators, doors, information desks, exits, restaurants, and any transportation services like taxi stands or railway stations if visible. Also include any other relevant information regarding facilities or furniture. Do not include information about people, the general environment, or decorative elements. Be specific with the names of different locations. If the object is not visible don\'t include it in the JSON. For any signs, give direction direction according to the arrow, if there\'s no arrow present, just say here. Double check each entry in the JSON to make sure it is in the image'
+
+    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
 
     payload = {
         "model": "gpt-4-vision-preview",
@@ -51,7 +55,7 @@ def get_gpt_response(img_path):
                     {"type": "text", "text": f"{prompt}"},
                     {
                         "type": "image_url",
-                        "image_url": {"url": f"data:image/jpeg;base64,{base64_img}"},
+                        "image_url": {"url": f"data:image/jpg;base64,{base64_img}"},
                     },
                 ],
             }
@@ -62,4 +66,32 @@ def get_gpt_response(img_path):
     response = requests.post(
         "https://api.openai.com/v1/chat/completions", headers=headers, json=payload
     )
+    print(response.json())
+
+    # base64_img = encode_img(img_path)
+    # prompt = 'Please examine the image and provide the directions to objects present in it, relative to my point of view, in a JSON format. The JSON file should look like `{"restaurant" : "right", "parking" : "ahead", "seating" : "left"}. Include facilities such as restrooms, elevators, information desks, exits, restaurants, and any transportation services like taxi stands or railway stations if visible. Also include any other relevant information regarding facilities. Do not include information about people, the general environment, or decorative elements. Be specific with the names of different locations. If the object is not visible don\'t include it in the JSON. For any signs, give direction direction according to the arrow, if there\'s no arrow present, just say here. Double check each entry in the JSON to make sure it is in the image'
+
+    # headers = {"Content-Type": "/json", "Authorization": f"Bearer {constants.API_KEY}"}
+
+    # payload = {
+    #     "model": "gpt-3.5-turbo",
+    #     "messages": [
+    #         {
+    #             "role": "user",
+    #             "content": [
+    #                 {"type": "text", "text": f"{prompt}"},
+    #                 {
+    #                     "type": "image_url",
+    #                     "image_url": {"url": f"data:image/jpeg;base64,{base64_img}"},
+    #                 },
+    #             ],
+    #         }
+    #     ],
+    #     "max_tokens": 300,
+    # }
+
+    # print(payload)
+    # response = requests.post(
+    #     "https://api.openai.com/v1/chat/completions", headers=headers, json=payload
+    # )
     return response
