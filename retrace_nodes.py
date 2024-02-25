@@ -158,8 +158,29 @@ def general_prompt(node_list, question):
     return general_response
 
 
-def generate_answer(node_list):
-    answer = general_prompt(node_list, "Where is the bathroom")
+def get_metadata(node_list, node_uuid):
+    metadata = {}
+    for object in node_list:
+        if object["uuid"] == node_uuid:
+            metadata = object["metadata"]
+
+    if metadata == []:
+        return "There are no important features detected here."
+
+    if len(metadata) == 1:
+        return f"There is a {metadata.keys[0]} {metadata.values[0]}"
+
+    answer = "There is a "
+    for key, value in metadata:
+        midword = ""
+        if value in ["left", "right"]:
+            midword = " to the"
+        answer = answer + f"{key} {midword} {value}, "
+    return answer
+
+
+def generate_answer(node_list, question):
+    answer = general_prompt(node_list, question)
     response = answer["choices"][0]["message"]["content"]
 
     return response
