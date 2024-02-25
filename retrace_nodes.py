@@ -180,6 +180,10 @@ def get_metadata(node_list, node_uuid):
 
 
 def generate_answer(node_list, question):
+    for n in node_list:
+        if "uuid" in n:
+            del n["uuid"]
+    print(node_list)
     answer = general_prompt(node_list, question)
     response = answer["choices"][0]["message"]["content"]
 

@@ -1,3 +1,4 @@
+import copy
 import datetime
 import sys
 import bluetooth
@@ -11,7 +12,12 @@ from pygame import mixer
 from pydub import AudioSegment
 import time
 from pynput.keyboard import Key, Listener
+from retrace_nodes import generate_answer, get_metadata
+import yaml
+from speech_to_text import voice_command
+from pathlib import Path
 
+NODE_DATA_PATH = Path(__file__).parent / "stata_nodes_demo.yaml"
 
 def tts_play(text):
     tts = gTTS(text)
@@ -55,15 +61,23 @@ def main():
     listener.start()
     mixer.init()
     all_nodes = [
-        ("DC:A6:32:55:FC:D8", "62f1730b-9f3d-4e20-8255-3b97d19bf866"),
-        # ("DC:A6:32:33:A9:E7", "3521e14d-e48d-46d2-aab9-89a50c1e4272"),
+        # ("DC:A6:32:55:FC:D8", "95a2e685-7c23-4c73-a658-f007de409f66"),
+        # ("DC:A6:32:33:A9:E7", "0b7f1a3b-811f-417b-b7d9-26dc5e2b3f89"),
     ]
 
     connections: dict[tuple[str, str], bluetooth.BluetoothSocket] = {}
     connections_data: dict[tuple[str, str], dict] = {}
 
-    data_history = []
-
+    # data_history = []
+    with open(NODE_DATA_PATH, "r") as file:
+        data = yaml.safe_load(file)
+    idx = 0
+    del data[idx]["x_coord"]
+    del data[idx]["y_coord"]
+    idx = 1
+    del data[idx]["x_coord"]
+    del data[idx]["y_coord"]
+    data_history = [copy.deepcopy(data[1]), copy.deepcopy(data[0])]
     try:
         while True:
             # Set up connections
@@ -113,9 +127,15 @@ def main():
             # Check for any user inputs
             if question_pressed:
                 print("Question Pressed")
+                question = voice_command()
+                answer = generate_answer(copy.deepcopy(data_history), question)
+                tts_play(answer)
                 question_pressed = False
             if metadata_pressed:
                 print("Meta Pressed")
+                for node, con in connections.items():
+                    answer = get_metadata(data_history, node[1])
+                    tts_play(answer)
                 metadata_pressed = False
 
     except KeyboardInterrupt:

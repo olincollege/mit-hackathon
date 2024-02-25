@@ -1,4 +1,24 @@
 ---
+- meta_data:
+    elevator: ahead
+    exit: right
+    information: left
+    restroom: left
+    seating: left
+  node_name: d434
+  uuid: 95a2e685-7c23-4c73-a658-f007de409f66
+  x_coord: '1241.77197265625'
+  y_coord: '303.49853515625'
+- meta_data:
+    chair: left
+    door exit: right
+    recycling bin: ahead left
+    trash bin: ahead right
+    whiteboard: left
+  node_name: d461
+  uuid: 0b7f1a3b-811f-417b-b7d9-26dc5e2b3f89
+  x_coord: '1353.912109375'
+  y_coord: '1281.8955078125'
 - meta_data: []
   node_name: d416
   uuid: ad3fcdd4-624e-4ddc-9a5b-1ec2733666da
@@ -38,16 +58,6 @@
   node_name: d426
   uuid: 5a6018b4-1ca9-4103-9821-0ddf2d243252
   x_coord: '819.96044921875'
-  y_coord: '303.49853515625'
-- meta_data:
-    elevator: ahead
-    exit: right
-    information: left
-    restroom: left
-    seating: left
-  node_name: d434
-  uuid: 95a2e685-7c23-4c73-a658-f007de409f66
-  x_coord: '1241.77197265625'
   y_coord: '303.49853515625'
 - meta_data: []
   node_name: d410
@@ -114,16 +124,6 @@
   uuid: 64025fff-9b24-4e98-996e-c54b6fe4e030
   x_coord: '409.4658203125'
   y_coord: '1280.86669921875'
-- meta_data:
-    chair: left
-    door exit: right
-    recycling bin: ahead left
-    trash bin: ahead right
-    whiteboard: left
-  node_name: d461
-  uuid: 0b7f1a3b-811f-417b-b7d9-26dc5e2b3f89
-  x_coord: '1353.912109375'
-  y_coord: '1281.8955078125'
 - meta_data: []
   node_name: d464
   uuid: 3ba0129e-2183-49ea-9aa7-592c2b7f5255
