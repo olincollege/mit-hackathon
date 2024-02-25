@@ -16,7 +16,7 @@ import argparse
 from pathlib import Path
 from yaml import Loader
 
-NODE_DATA_PATH = Path(__file__).parent / "stata_nodes.yaml"
+NODE_DATA_PATH = Path(__file__).parent / "stata_nodes_demo.yaml"
 
 
 def establish_ble(server_sock, port):
