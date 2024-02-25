@@ -12,7 +12,6 @@ from pydub import AudioSegment
 import time
 
 
-mixer.init()
 
 
 def tts_play(text):
@@ -39,6 +38,7 @@ def get_rssi(device_address):
 
 
 def main():
+    mixer.init()
     all_nodes = [
         ("DC:A6:32:55:FC:D8", "62f1730b-9f3d-4e20-8255-3b97d19bf866"),
         ("DC:A6:32:33:A9:E7", "3521e14d-e48d-46d2-aab9-89a50c1e4272"),
