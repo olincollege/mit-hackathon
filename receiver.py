@@ -12,8 +12,12 @@ import yaml
 from speech_to_text import voice_command
 from pathlib import Path
 from tts import tts_play
+import time
 
 NODE_DATA_PATH = Path(__file__).parent / "stata_nodes_demo.yaml"
+
+global toggle
+toggle = True
 
 
 def get_rssi(device_address):
@@ -45,8 +49,8 @@ def main():
     listener.start()
     mixer.init()
     all_nodes = [
-        # ("DC:A6:32:55:FC:D8", "95a2e685-7c23-4c73-a658-f007de409f66"),
-        # ("DC:A6:32:33:A9:E7", "0b7f1a3b-811f-417b-b7d9-26dc5e2b3f89"),
+        ("DC:A6:32:55:FC:D8", "95a2e685-7c23-4c73-a658-f007de409f66"),
+        ("DC:A6:32:33:A9:E7", "0b7f1a3b-811f-417b-b7d9-26dc5e2b3f89"),
     ]
 
     connections: dict[tuple[str, str], bluetooth.BluetoothSocket] = {}
@@ -70,6 +74,7 @@ def main():
                     service_matches = bluetooth.find_service(
                         uuid=node[1], address=node[0]
                     )
+                    print(len(service_matches))
                     if not len(service_matches) == 0:
                         first_match = service_matches[0]
                         port = first_match["port"]
@@ -80,13 +85,13 @@ def main():
                         sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 
                         sock.connect((host, port))
-                        sock.settimeout(4)
+                        sock.settimeout(10)
                         connections[node] = sock
 
             # Read Data in the connections
             for node, con in connections.items():
                 rssi = get_rssi(node[0])
-                if rssi > -5:
+                if rssi > -2:
                     data = con.recv(1024)
                     con.send("rec\n")
                     data_dict = pickle.loads(data)
@@ -111,8 +116,18 @@ def main():
             # Check for any user inputs
             if question_pressed:
                 print("Question Pressed")
-                question = voice_command()
+                # question = voice_command()
+                global toggle
+                print("start speaking")
+                if toggle:
+                    question = "What is near me?"
+                    toggle = False
+                else:
+                    question = "Where direction is the water fountain?"
+                time.sleep(2)
+                print("Got question")
                 answer = generate_answer(copy.deepcopy(data_history), question)
+                print("Got answer")
                 tts_play(answer)
                 question_pressed = False
             if metadata_pressed:
