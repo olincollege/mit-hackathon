@@ -10,8 +10,7 @@ from io import BytesIO
 from pygame import mixer
 from pydub import AudioSegment
 import time
-
-
+from pynput.keyboard import Key, Listener
 
 
 def tts_play(text):
@@ -36,12 +35,28 @@ def get_rssi(device_address):
     rssi = int(output.split(": ")[1])
     return rssi
 
-
+metadata_pressed = False
+question_pressed = False
 def main():
+    global metadata_pressed, question_pressed
+    metadata_pressed = False
+    question_pressed = False
+    def show(key):
+        global metadata_pressed, question_pressed
+        if key == Key.right:
+            question_pressed = True
+        if key == Key.left:
+            metadata_pressed = True
+
+        if key == Key.delete:
+            return False
+
+    listener = Listener(on_press=show)
+    listener.start()
     mixer.init()
     all_nodes = [
         ("DC:A6:32:55:FC:D8", "62f1730b-9f3d-4e20-8255-3b97d19bf866"),
-        ("DC:A6:32:33:A9:E7", "3521e14d-e48d-46d2-aab9-89a50c1e4272"),
+        # ("DC:A6:32:33:A9:E7", "3521e14d-e48d-46d2-aab9-89a50c1e4272"),
     ]
 
     connections: dict[tuple[str, str], bluetooth.BluetoothSocket] = {}
@@ -96,7 +111,12 @@ def main():
                         tts_play(f"Leaving room {data_dict['node_name']}")
 
             # Check for any user inputs
-            # TODO
+            if question_pressed:
+                print("Question Pressed")
+                question_pressed = False
+            if metadata_pressed:
+                print("Meta Pressed")
+                metadata_pressed = False
 
     except KeyboardInterrupt:
         for con in connections.values():
