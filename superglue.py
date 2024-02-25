@@ -77,9 +77,7 @@ def get_matching_keypoints(
 
 
 if __name__ == "__main__":
-    image0_path = IMAGE_DIR / "IMG_2272.jpg"
-    image1_path = IMAGE_DIR / "IMG_2273.jpg"
+    image0_path = IMAGE_DIR / "IMG_2279.PNG"
+    image1_path = IMAGE_DIR / "test3.jpg"
     mkpts0, mkpts1, confidence = get_matching_keypoints(image0_path, image1_path)
     print(f"Resolved {len(mkpts0)} keypoints")
-
-    breakpoint()
