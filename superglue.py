@@ -26,16 +26,12 @@ def load_image(impath):
     if grayim is None:
         raise Exception("Error reading image %s" % impath)
     w, h = grayim.shape[1], grayim.shape[0]
-    w_new, h_new = process_resize(w, h, [640, 320])
+    w_new, h_new = process_resize(w, h, [640, 480])
     grayim = cv2.resize(grayim, (w_new, h_new), interpolation=cv2.INTER_AREA)
     return grayim
 
 
-def get_matching_keypoints(
-    image0_path: Path,
-    image1_path: Path,
-    thresh: int = None,
-):
+def load_model():
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     config = {
@@ -52,6 +48,16 @@ def get_matching_keypoints(
     }
 
     matching = Matching(config).eval().to(device)
+    
+    return matching, device
+
+
+def get_matching_keypoints(
+    matching,
+    device,
+    image0_path: Path,
+    image1_path: Path,
+):
     image = load_image(str(image0_path))
     frame_tensor = frame2tensor(image, device)
 

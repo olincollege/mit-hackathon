@@ -5,31 +5,15 @@ import bluetooth
 import pickle
 import bluetooth._bluetooth as bluez
 import subprocess
-from gtts import gTTS
-from io import BytesIO
-from io import BytesIO
 from pygame import mixer
-from pydub import AudioSegment
-import time
 from pynput.keyboard import Key, Listener
 from retrace_nodes import generate_answer, get_metadata
 import yaml
 from speech_to_text import voice_command
 from pathlib import Path
+from tts import tts_play
 
 NODE_DATA_PATH = Path(__file__).parent / "stata_nodes_demo.yaml"
-
-def tts_play(text):
-    tts = gTTS(text)
-    audio_bytes_io = BytesIO()
-    tts.write_to_fp(audio_bytes_io)
-    audio_bytes_io.seek(0)
-    audio = AudioSegment.from_file(audio_bytes_io, format="mp3")
-    audio_duration = len(audio) / 1000.0
-    audio_bytes_io.seek(0)
-    mixer.music.load(audio_bytes_io, "mp3")
-    mixer.music.play()
-    time.sleep(audio_duration)
 
 
 def get_rssi(device_address):
