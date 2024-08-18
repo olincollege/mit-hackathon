@@ -1,22 +1,20 @@
 ---
 - meta_data:
-    elevator: ahead
-    exit: right
-    information: left
-    restroom: left
-    seating: left
     bathroom: left
+    water_fountain: left
+    door: ahead
+    narrow hallway: ahead
   node_name: d401
   uuid: 95a2e685-7c23-4c73-a658-f007de409f66
   x_coord: '1241.77197265625'
   y_coord: '303.49853515625'
 - meta_data:
-    chair: left
-    door exit: right
-    recycling bin: ahead left
-    trash bin: ahead right
-    whiteboard: left
-    water fountain: right
+    # chair: left
+    # door exit: right
+    # recycling bin: ahead left
+    # trash bin: ahead right
+    # whiteboard: left
+    water fountain: left
   node_name: d405
   uuid: 0b7f1a3b-811f-417b-b7d9-26dc5e2b3f89
   x_coord: '1353.912109375'

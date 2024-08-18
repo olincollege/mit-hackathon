@@ -9,9 +9,8 @@ device = torch.device(
     if torch.cuda.is_available()
     else "mps" if torch.backends.mps.is_available() else "cpu"
 )
-text_prompt = "black trashcan in the corner"
-input = cv2.imread("images/test3.jpg")
-print(input.shape)
+text_prompt = "the door"
+input = cv2.imread("images/IMG_2272.jpg")
 input = cv2.resize(input, (640, 480))
 model = FastSAM("./model/FastSAM-x.pt")
 everything_results = model(
